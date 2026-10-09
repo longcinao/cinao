@@ -1,0 +1,15 @@
+{
+  "version": "5.10.1",
+  "flags": {
+    "舍弃": true,
+    "不确定": false
+  },
+  "shapes": [],
+  "imagePath": "..\\..\\raw_registered\\2025-03-06_10-05-10-white\\543.jpeg",
+  "imageData": null,
+  "imageHeight": 377,
+  "imageWidth": 773,
+  "sample": "2025-03-06_10-05-10-white",
+  "annotate_band": 543,
+  "colorPath": "..\\..\\color_images_registered\\2025-03-06_10-05-10-white.jpeg"
+}
