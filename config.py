@@ -6,10 +6,9 @@
 其他脚本（train.py / export_*.py / deploy/*）都从本文件读取配置，
 保证训练、导出、部署三者使用的波段选择与归一化方式完全一致。
 
-当前数据源（2026-10-06 盘点）：
-  E:\\label\\04_encoded_task\\dataset\\raw_registered
-  共 2439 个配准样本文件夹；其中 2437 个含齐 590/610/650/695。
-  标注 JSON 在 dataset\\labels\\hsi（421 条，80 条勾了舍弃）。
+当前数据源（本机 Linux，2026-10-09）：
+  配准窄带图：/home/server/wxl/hyperspctral_image
+  标注 JSON：本目录 hsi/（原 dataset/labels/hsi）
   可用监督样本见 LABELS_CSV（由 build_labels_from_encoded_task.py 生成）。
 """
 
@@ -19,26 +18,28 @@ import numpy as np
 # ============================================================
 # 1. 路径
 # ============================================================
-# 代码、权重、CSV、日志都写在本目录。本机工作目录是 E:\高光谱舌象库。
+# 代码、权重、CSV、日志都写在本目录。
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = PROJECT_DIR
 OUTPUT_DIR = PROJECT_DIR
 CHECKPOINT_DIR = os.path.join(OUTPUT_DIR, "checkpoints")
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 
-# ---- 高光谱标注库（04_encoded_task）----
-# 标注软件和图像留在这里。补标后重新导出 CSV，再在本目录训练。
-ENCODED_TASK_ROOT = r"E:\label\04_encoded_task"
-DATASET_DIR = os.path.join(ENCODED_TASK_ROOT, "dataset")
-RAW_REGISTERED_DIR = os.path.join(DATASET_DIR, "raw_registered")
-COLOR_REGISTERED_DIR = os.path.join(DATASET_DIR, "color_images_registered")
-LABEL_JSON_DIR = os.path.join(DATASET_DIR, "labels", "hsi")
-LABEL_CLASSES_FILE = os.path.join(DATASET_DIR, "labels", "classes.txt")
-LABEL_PROTOCOL_FILE = os.path.join(DATASET_DIR, "labels", "annotation_protocol.md")
-WAVELENGTH_TABLE = os.path.join(ENCODED_TASK_ROOT, "波长对照.xlsx")
+# ---- 高光谱数据（本机）----
+# 标注 JSON 在项目内 hsi/；配准波段图在上级目录的 hyperspctral_image/。
+# 补标后重新导出 CSV，再在本目录训练。
+LABEL_JSON_DIR = os.path.join(PROJECT_DIR, "hsi")
+RAW_REGISTERED_DIR = os.path.join(os.path.dirname(PROJECT_DIR), "hyperspctral_image")
+COLOR_REGISTERED_DIR = os.path.join(PROJECT_DIR, "color_images_registered")  # 本机可选，没有则导出 CSV 时 color 列为空
+LABEL_CLASSES_FILE = os.path.join(PROJECT_DIR, "labels", "classes.txt")
+LABEL_PROTOCOL_FILE = os.path.join(PROJECT_DIR, "labels", "annotation_protocol.md")
+WAVELENGTH_TABLE = os.path.join(PROJECT_DIR, "波长对照.xlsx")
+# 兼容仍引用旧变量名的脚本
+ENCODED_TASK_ROOT = PROJECT_DIR
+DATASET_DIR = PROJECT_DIR
 
 # band_folder：每个样本一个文件夹，文件名是波长（590.jpeg 等）
-# mat：旧的单个 .mat 立方体，仍在 D:\舌象数据库\高光谱舌象数据库\其他hyperspectral，当前训练不用它
+# mat：旧的单个 .mat 立方体，当前训练不用它
 DATA_FORMAT = "band_folder"
 SAMPLE_DIR = RAW_REGISTERED_DIR
 MAT_DIR = SAMPLE_DIR  # 兼容旧脚本参数名，实际指向配准波段文件夹
@@ -101,7 +102,7 @@ HEAD_DROPOUT = 0.2
 # 6. 训练超参
 # ============================================================
 BATCH_SIZE = 16
-NUM_WORKERS = 0                  # Windows 下读文件夹 JPEG 时用 0，避免 DataLoader 多进程卡死
+NUM_WORKERS = 4                  # Linux 可用多进程加速读图；Windows 若卡死改回 0
 LEARNING_RATE = 1e-3
 WEIGHT_DECAY = 1e-4
 EPOCHS = 60
