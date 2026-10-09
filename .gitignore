@@ -1,11 +1,54 @@
+# ---- Python / 虚拟环境 ----
 .venv/
 venv/
+env/
 __pycache__/
 *.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# ---- 训练产物（权重大，不进库）----
+checkpoints/
 *.pth
+*.pt
+*.ckpt
 *.onnx
 *.tflite
-checkpoints/
+*.pb
+band_stats.json
+
+# ---- 运行日志 / 临时输出 ----
+*.log
+train_run.log
+*.tmp
+*.temp
+.cache/
+
+# ---- 数据压缩包与本地大数据（标注 JSON 在 hsi/，图像在库外）----
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.mat
+hsi.zip
+color_images_registered/
+raw_registered/
+
+# ---- IDE / 系统 ----
+.idea/
+.vscode/
+*.swp
+*.swo
 .DS_Store
 Thumbs.db
+desktop.ini
 ~$*.docx
+~$*.xlsx
+
+# ---- Jupyter ----
+.ipynb_checkpoints/
