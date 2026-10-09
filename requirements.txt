@@ -1,0 +1,20 @@
+# ===== 训练环境（PC，GPU/CPU 均可）=====
+torch>=2.0
+torchvision>=0.15
+numpy
+scipy
+h5py
+pandas
+matplotlib
+pillow
+
+# ===== 导出 / 校验（PC）=====
+onnx
+onnxruntime
+
+# ===== ONNX -> TFLite 转换（PC）=====
+# onnx2tf
+# tensorflow-cpu
+
+# ===== 树莓派 4B 推理（ARM）=====
+# tflite-runtime        # 或 ai-edge-litert
